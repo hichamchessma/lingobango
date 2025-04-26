@@ -3,8 +3,21 @@ import Conjugaison from "./Conjugaison";
 
 export default function App() {
   return (
-    <div style={{ fontFamily: "sans-serif", maxWidth: 480, margin: "0 auto", padding: 24 }}>
-      <h1>Lingobango</h1>
+    <div style={{ 
+      fontFamily: "Roboto, sans-serif", 
+      minHeight: "100vh",
+      backgroundColor: "#f5f5f5",
+      padding: "24px",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center"
+    }}>
+      <h1 style={{ 
+        color: "#1976d2",
+        marginBottom: "32px",
+        fontSize: "2.5rem",
+        fontWeight: "bold"
+      }}>Lingobango</h1>
       <Conjugaison />
     </div>
   );

@@ -21,3 +21,10 @@ yarn-error.log*
 
 # vscode
 .vscode/
+
+# Fichiers de build et de cache à ignorer
+executionHistory.lock
+fileHashes.bin
+fileHashes.lock
+resourceHashesCache.bin
+buildOutputCleanup.lock

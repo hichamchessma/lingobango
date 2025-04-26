@@ -1,16 +1,43 @@
 import React, { useEffect, useState } from 'react';
+import { Paper, Table, TableBody, TableCell, TableContainer, TableRow, IconButton, Button, Box, Alert, CircularProgress, Typography } from '@mui/material';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import VerbSelector from './components/VerbSelector';
+import TimeSelector from './components/TimeSelector';
 
 function Conjugaison() {
-  const [verbe] = useState('etre'); // Fixé à "etre" pour la démo, peut être rendu dynamique
+  const [verbe, setVerbe] = useState('etre');
   const [temps, setTemps] = useState('present');
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [showSynonymes, setShowSynonymes] = useState(false);
-  const [showHomonymes, setShowHomonymes] = useState(false);
+  const [showAntonymes, setShowAntonymes] = useState(false);
 
-  // Données mock pour synonymes/homonymes
-  const synonymes = ["exister", "demeurer", "subsister"];
-  const homonymes = ["était", "étai", "étay"];
+  const [synonymes, setSynonymes] = useState([]);
+  const [antonymes, setAntonymes] = useState([]);
+  const [loadingSynonyms, setLoadingSynonyms] = useState(false);
+  const [loadingAntonyms, setLoadingAntonyms] = useState(false);
+
+  useEffect(() => {
+    if (showSynonymes) {
+      setLoadingSynonyms(true);
+      fetch(`http://localhost:8080/api/synonymes?verbe=${verbe}`)
+        .then(res => res.json())
+        .then(data => setSynonymes(data))
+        .catch(err => console.error('Erreur lors du chargement des synonymes:', err))
+        .finally(() => setLoadingSynonyms(false));
+    }
+  }, [verbe, showSynonymes]);
+
+  useEffect(() => {
+    if (showAntonymes) {
+      setLoadingAntonyms(true);
+      fetch(`http://localhost:8080/api/antonymes?verbe=${verbe}`)
+        .then(res => res.json())
+        .then(data => setAntonymes(data))
+        .catch(err => console.error('Erreur lors du chargement des antonymes:', err))
+        .finally(() => setLoadingAntonyms(false));
+    }
+  }, [verbe, showAntonymes]);
 
   useEffect(() => {
     fetch(`http://localhost:8080/api/conjugaison?verbe=${verbe}&temps=${temps}`)
@@ -22,8 +49,18 @@ function Conjugaison() {
       .catch(setError);
   }, [verbe, temps]);
 
-  if (error) return <div>Erreur: {error.message}</div>;
-  if (!data) return <div>Chargement...</div>;
+  if (error) return (
+    <Alert severity="error" sx={{ mt: 2 }}>
+      Une erreur s'est produite : {error.message}
+    </Alert>
+  );
+
+  if (!data) return (
+    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+      <CircularProgress />
+      <Typography sx={{ ml: 2 }}>Chargement des conjugaisons...</Typography>
+    </Box>
+  );
 
   // Liste explicite des temps
   const tempsDisponibles = [
@@ -33,54 +70,145 @@ function Conjugaison() {
   ];
 
   return (
-    <div>
-      <h2 style={{textAlign: 'center'}}>Conjugaison du verbe {data.verbe} ({data.temps})</h2>
-      <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: 24 }}>
-        <tbody>
-          {data.pronoms.map((pronom, idx) => (
-            <tr key={pronom}>
-              <td style={{ padding: 8, fontWeight: 600 }}>{pronom}</td>
-              <td style={{ padding: 8 }}>{data.conjugaisons[idx]}</td>
-              <td style={{ padding: 8 }}>
-                {/* Bouton d'écoute désactivé pour l'instant */}
-                <button title="Écouter" disabled>🔊</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <div style={{ marginBottom: 16 }}>
-        <button onClick={() => {setShowSynonymes(s => !s); setShowHomonymes(false);}}>
-          {showSynonymes ? "Cacher Synonymes" : "← Synonymes"}
-        </button>
-        <button style={{ float: "right" }} onClick={() => {setShowHomonymes(h => !h); setShowSynonymes(false);}}>
-          {showHomonymes ? "Cacher Homonymes" : "Homonymes →"}
-        </button>
-      </div>
-      {showSynonymes && (
-        <div style={{ marginBottom: 12, background: '#fffde7', borderRadius: 8, padding: 8 }}>
-          <b>Synonymes :</b> {synonymes.join(', ')}
-        </div>
-      )}
-      {showHomonymes && (
-        <div style={{ marginBottom: 12, background: '#fce4ec', borderRadius: 8, padding: 8 }}>
-          <b>Homonymes :</b> {homonymes.join(', ')}
-        </div>
-      )}
-      <div style={{ marginBottom: 16, display: 'flex', gap: 8, justifyContent: 'center' }}>
-        {tempsDisponibles.map(t => (
-          <button
-            key={t.value}
-            onClick={() => setTemps(t.value)}
-            disabled={temps === t.value}
-            style={temps === t.value ? { fontWeight: 'bold', background: '#bbdefb' } : {}}
-          >{t.label}</button>
-        ))}
-      </div>
-      <div style={{ background: "#e3f2fd", borderRadius: 8, padding: 12, marginTop: 24 }}>
-        Aujourd'hui, vous avez appris à conjuguer le verbe <b>{data.verbe}</b> au <b>{data.temps}</b> pour tous les pronoms !
-      </div>
-    </div>
+    <>
+      <Box sx={{ maxWidth: 500, width: '100%', mx: 'auto', display: 'flex', flexDirection: 'column', gap: 2, p: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
+          <Box sx={{ flex: 1 }}>
+            <VerbSelector value={verbe} onChange={setVerbe} />
+          </Box>
+          <Box sx={{ width: '120px' }}>
+            <TimeSelector value={temps} onChange={setTemps} />
+          </Box>
+        </Box>
+
+        <Paper elevation={3} sx={{ 
+          p: 2, 
+          borderRadius: 2,
+          backgroundColor: '#ffffff',
+          mb: 1
+        }}>
+          <Typography variant="h6" sx={{ 
+            textAlign: 'center', 
+            mb: 2, 
+            fontWeight: 'bold',
+            color: '#1976d2',
+            fontSize: '1.1rem'
+          }}>
+            Conjugaison du verbe {data.verbe} ({data.temps})
+          </Typography>
+          <TableContainer>
+            <Table size="small">
+              <TableBody>
+                {data.pronoms.map((pronom, idx) => (
+                  <TableRow key={pronom} sx={{ '&:hover': { backgroundColor: '#f5f5f5' } }}>
+                    <TableCell sx={{ 
+                      fontWeight: 600, 
+                      width: '30%',
+                      fontSize: '1rem',
+                      color: '#2196f3',
+                      py: 0.5
+                    }}>
+                      {pronom}
+                    </TableCell>
+                    <TableCell sx={{ fontSize: '1rem', py: 0.5 }}>{data.conjugaisons[idx]}</TableCell>
+                    <TableCell align="right" sx={{ width: '10%' }}>
+                      <IconButton 
+                        title="Écouter" 
+                        disabled
+                        sx={{ '&.Mui-disabled': { color: '#bdbdbd' }, p: 0.5 }}
+                      >
+                        <VolumeUpIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+
+        <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', mb: 1 }}>
+          <Button
+            variant={showSynonymes ? "contained" : "outlined"}
+            onClick={() => {setShowSynonymes(s => !s); setShowAntonymes(false);}}
+            sx={{ 
+              minWidth: '100px',
+              borderRadius: 2,
+              textTransform: 'none',
+              fontSize: '0.95rem',
+              py: 0.5
+            }}
+          >
+            {showSynonymes ? "Cacher Synonymes" : "Synonymes"}
+          </Button>
+          <Button
+            variant={showAntonymes ? "contained" : "outlined"}
+            onClick={() => {setShowAntonymes(a => !a); setShowSynonymes(false);}}
+            sx={{ 
+              minWidth: '100px',
+              borderRadius: 2,
+              textTransform: 'none',
+              fontSize: '0.95rem',
+              py: 0.5
+            }}
+          >
+            {showAntonymes ? "Cacher Contraires" : "Contraires"}
+          </Button>
+        </Box>
+
+        {(showSynonymes || showAntonymes) && (
+          <Paper elevation={2} sx={{ p: 1.5, borderRadius: 2, backgroundColor: '#ffffff', mb: 1 }}>
+            {showSynonymes && (
+              <Box>
+                <Typography variant="subtitle1" sx={{ mb: 1, color: '#1976d2', fontSize: '1rem' }}>Synonymes</Typography>
+                {loadingSynonyms ? (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <CircularProgress size={18} />
+                    <Typography sx={{ fontSize: '0.95rem' }}>Chargement des synonymes...</Typography>
+                  </Box>
+                ) : synonymes.length > 0 ? (
+                  <Typography sx={{ fontSize: '0.95rem', lineHeight: 1.4 }}>
+                    {synonymes.join(' • ')}
+                  </Typography>
+                ) : (
+                  <Typography sx={{ color: '#666', fontSize: '0.95rem' }}>Aucun synonyme trouvé</Typography>
+                )}
+              </Box>
+            )}
+
+            {showAntonymes && (
+              <Box sx={{ mt: showSynonymes ? 1.5 : 0 }}>
+                <Typography variant="subtitle1" sx={{ mb: 1, color: '#1976d2', fontSize: '1rem' }}>Contraires</Typography>
+                {loadingAntonyms ? (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <CircularProgress size={18} />
+                    <Typography sx={{ fontSize: '0.95rem' }}>Chargement des contraires...</Typography>
+                  </Box>
+                ) : antonymes.length > 0 ? (
+                  <Typography sx={{ fontSize: '0.95rem', lineHeight: 1.4 }}>
+                    {antonymes.join(' • ')}
+                  </Typography>
+                ) : (
+                  <Typography sx={{ color: '#666', fontSize: '0.95rem' }}>Aucun contraire trouvé</Typography>
+                )}
+              </Box>
+            )}
+          </Paper>
+        )}
+
+        <Paper elevation={2} sx={{ 
+          p: 1.5, 
+          borderRadius: 2, 
+          backgroundColor: '#e8f5e9',
+          textAlign: 'center',
+          fontSize: '0.95rem'
+        }}>
+          <Typography variant="subtitle1" sx={{ color: '#2e7d32', fontSize: '1rem' }}>
+            Félicitations ! Vous avez appris à conjuguer le verbe <strong>{data.verbe}</strong> au <strong>{data.temps}</strong> !
+          </Typography>
+        </Paper>
+      </Box>
+    </>
   );
 }
 
