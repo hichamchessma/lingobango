@@ -72,11 +72,11 @@ function Conjugaison() {
   return (
     <>
       <Box sx={{ maxWidth: 500, width: '100%', mx: 'auto', display: 'flex', flexDirection: 'column', gap: 2, p: 1 }}>
-        <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
-          <Box sx={{ flex: 1 }}>
+        <Box sx={{ display: 'flex', gap: 4, alignItems: 'center', width: '100%' }}>
+          <Box sx={{ flex: 1.5, minWidth: 180, maxWidth: 350 }}>
             <VerbSelector value={verbe} onChange={setVerbe} />
           </Box>
-          <Box sx={{ width: '120px' }}>
+          <Box sx={{ flex: 1, minWidth: 120, maxWidth: 180 }}>
             <TimeSelector value={temps} onChange={setTemps} />
           </Box>
         </Box>

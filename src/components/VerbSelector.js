@@ -3,24 +3,37 @@ import { Autocomplete, TextField, CircularProgress } from '@mui/material';
 
 function VerbSelector({ value, onChange }) {
   const [verbes, setVerbes] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [inputValue, setInputValue] = useState("");
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/verbes')
+    let ignore = false;
+    setLoading(true);
+    fetch(`http://localhost:8080/api/verbes?q=${encodeURIComponent(inputValue)}`)
       .then(res => res.json())
       .then(data => {
-        setVerbes(data);
-        setLoading(false);
+        if (!ignore) {
+          // Supprime les doublons
+          setVerbes([...new Set(data)]);
+          setLoading(false);
+        }
       })
       .catch(err => {
-        console.error('Erreur lors du chargement des verbes:', err);
-        setLoading(false);
+        if (!ignore) {
+          console.error('Erreur lors du chargement des verbes:', err);
+          setVerbes([]);
+          setLoading(false);
+        }
       });
-  }, []);
+    return () => { ignore = true; };
+  }, [inputValue]);
+
   return (
     <Autocomplete
       value={value}
       onChange={(event, newValue) => onChange(newValue)}
+      inputValue={inputValue}
+      onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
       options={verbes}
       loading={loading}
       disablePortal
@@ -53,5 +66,6 @@ function VerbSelector({ value, onChange }) {
     />
   );
 }
+
 
 export default VerbSelector;
