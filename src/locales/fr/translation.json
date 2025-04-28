@@ -1,0 +1,17 @@
+{
+  "title": "Lingobango",
+  "verbe": "Verbe",
+  "passe": "Passé",
+  "present": "Présent",
+  "futur": "Futur",
+  "loading": "Chargement des conjugaisons...",
+  "conjugaison_de": "Conjugaison du verbe {{verbe}} ({{temps}})",
+  "synonymes": "Synonymes",
+  "contraires": "Contraires",
+  "cacher_synonymes": "Cacher Synonymes",
+  "cacher_contraires": "Cacher Contraires",
+  "aucun_synonyme": "Aucun synonyme trouvé",
+  "aucun_contraire": "Aucun contraire trouvé",
+  "felicitations": "Félicitations ! Vous avez appris à conjuguer le verbe <1>{{verbe}}</1> au <3>{{temps}}</3> !",
+  "erreur": "Une erreur s'est produite : {{message}}"
+}

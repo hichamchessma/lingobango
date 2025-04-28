@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Autocomplete, TextField, CircularProgress } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
-function VerbSelector({ value, onChange }) {
+function VerbSelector({ value, onChange, language }) {
+  const { t } = useTranslation();
   const [verbes, setVerbes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -9,7 +11,7 @@ function VerbSelector({ value, onChange }) {
   useEffect(() => {
     let ignore = false;
     setLoading(true);
-    fetch(`http://localhost:8080/api/verbes?q=${encodeURIComponent(inputValue)}`)
+    fetch(`http://localhost:8080/api/verbes?q=${encodeURIComponent(inputValue)}&langue=${language}`)
       .then(res => res.json())
       .then(data => {
         if (!ignore) {
@@ -26,12 +28,23 @@ function VerbSelector({ value, onChange }) {
         }
       });
     return () => { ignore = true; };
-  }, [inputValue]);
+  }, [inputValue, language]);
 
   return (
     <Autocomplete
       value={value}
-      onChange={(event, newValue) => onChange(newValue)}
+      onChange={(_event, newValue) => {
+        // Si newValue est un objet, extraire la string
+        if (typeof newValue === 'string') {
+          onChange(newValue);
+        } else if (newValue && typeof newValue === 'object' && newValue.inputValue) {
+          onChange(newValue.inputValue);
+        } else if (typeof newValue === 'object' && newValue !== null) {
+          onChange(newValue.label || newValue.value || '');
+        } else {
+          onChange('');
+        }
+      }}
       inputValue={inputValue}
       onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
       options={verbes}
@@ -41,7 +54,7 @@ function VerbSelector({ value, onChange }) {
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Verbe"
+          label={t('verbe')}
           variant="outlined"
           fullWidth
           size="medium"

@@ -1,0 +1,17 @@
+{
+  "title": "Lingobango",
+  "verbe": "Verb",
+  "passe": "Past",
+  "present": "Present",
+  "futur": "Future",
+  "loading": "Loading conjugations...",
+  "conjugaison_de": "Conjugation of verb {{verbe}} ({{temps}})",
+  "synonymes": "Synonyms",
+  "contraires": "Antonyms",
+  "cacher_synonymes": "Hide Synonyms",
+  "cacher_contraires": "Hide Antonyms",
+  "aucun_synonyme": "No synonyms found",
+  "aucun_contraire": "No antonyms found",
+  "felicitations": "Congratulations! You have learned to conjugate the verb <1>{{verbe}}</1> in <3>{{temps}}</3>!",
+  "erreur": "An error occurred: {{message}}"
+}

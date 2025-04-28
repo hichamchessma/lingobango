@@ -1,0 +1,17 @@
+{
+  "title": "Lingobango",
+  "verbe": "Verbo",
+  "passe": "Pasado",
+  "present": "Presente",
+  "futur": "Futuro",
+  "loading": "Cargando conjugaciones...",
+  "conjugaison_de": "Conjugación del verbo {{verbe}} ({{temps}})",
+  "synonymes": "Sinónimos",
+  "contraires": "Antónimos",
+  "cacher_synonymes": "Ocultar sinónimos",
+  "cacher_contraires": "Ocultar antónimos",
+  "aucun_synonyme": "No se encontraron sinónimos",
+  "aucun_contraire": "No se encontraron antónimos",
+  "felicitations": "¡Felicidades! Has aprendido a conjugar el verbo <1>{{verbe}}</1> en <3>{{temps}}</3>!",
+  "erreur": "Ocurrió un error: {{message}}"
+}

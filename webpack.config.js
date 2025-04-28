@@ -32,7 +32,16 @@ module.exports = {
     }),
   ],
   devServer: {
-    static: './dist',
+    static: [
+      {
+        directory: path.join(__dirname, 'dist'),
+        publicPath: '/',
+      },
+      {
+        directory: path.join(__dirname, 'public'),
+        publicPath: '/',
+      },
+    ],
     port: 3001,
     open: true,
     hot: true,

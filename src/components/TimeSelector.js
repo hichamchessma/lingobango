@@ -1,13 +1,15 @@
 import React from 'react';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 const tempsDisponibles = [
-  { label: 'Passé', value: 'passe' },
-  { label: 'Présent', value: 'present' },
-  { label: 'Futur', value: 'futur' }
+  { labelKey: 'passe', value: 'passe' },
+  { labelKey: 'present', value: 'present' },
+  { labelKey: 'futur', value: 'futur' }
 ];
 
 function TimeSelector({ value, onChange }) {
+  const { t } = useTranslation();
   return (
     <ToggleButtonGroup
       value={value}
@@ -23,6 +25,13 @@ function TimeSelector({ value, onChange }) {
         justifyContent: 'center',
         marginBottom: 2,
         '& .MuiToggleButton-root': {
+          minWidth: 90,
+          paddingLeft: 2,
+          paddingRight: 2,
+          fontSize: '0.97rem',
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
+          overflow: 'hidden',
           '&.Mui-selected': {
             backgroundColor: '#bbdefb',
             '&:hover': {
@@ -36,9 +45,9 @@ function TimeSelector({ value, onChange }) {
         <ToggleButton
           key={temps.value}
           value={temps.value}
-          aria-label={temps.label}
+          aria-label={t(temps.labelKey)}
         >
-          {temps.label}
+          {t(temps.labelKey)}
         </ToggleButton>
       ))}
     </ToggleButtonGroup>
