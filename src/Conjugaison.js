@@ -4,6 +4,8 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VerbSelector from './components/VerbSelector';
 import TimeSelector from './components/TimeSelector';
 import { useTranslation, Trans } from 'react-i18next';
+import Cube3D from './components/Cube3D';
+import './components/Cube3D.css';
 
 function Conjugaison({ language }) {
   const { t } = useTranslation();
@@ -105,16 +107,20 @@ function Conjugaison({ language }) {
                   conjugaisons = Array(6).fill('N/A');
                 }
                 return pronoms.map((pronom, idx) => (
-                  <TableRow key={pronom + '_' + idx} sx={{ '&:hover': { backgroundColor: '#f5f5f5' } }}>
-                    <TableCell sx={{ fontWeight: 600, width: '30%', fontSize: '1rem', color: '#2196f3', py: 0.5 }}>{pronom}</TableCell>
-                    <TableCell sx={{ fontSize: '1rem', py: 0.5 }}>{conjugaisons[idx]}</TableCell>
-                    <TableCell align="right" sx={{ width: '10%' }}>
-                      <IconButton title="Écouter" disabled sx={{ '&.Mui-disabled': { color: '#bdbdbd' }, p: 0.5 }}>
-                        <VolumeUpIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ));
+  <TableRow key={pronom + '_' + idx} sx={{ '&:hover': { backgroundColor: '#191e2d' } }}>
+    <TableCell sx={{ width: '35%', py: 0.5, border: 'none', background: 'transparent' }}>
+      <Cube3D word={pronom} />
+    </TableCell>
+    <TableCell sx={{ width: '50%', py: 0.5, border: 'none', background: 'transparent' }}>
+      <Cube3D word={conjugaisons[idx] || ''} />
+    </TableCell>
+    <TableCell align="right" sx={{ width: '10%', border: 'none', background: 'transparent' }}>
+      <IconButton title="Écouter" disabled sx={{ '&.Mui-disabled': { color: '#bdbdbd' }, p: 0.5 }}>
+        <VolumeUpIcon />
+      </IconButton>
+    </TableCell>
+  </TableRow>
+));
               })()}
             </TableBody>
           </Table>

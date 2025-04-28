@@ -32,25 +32,14 @@ function VerbSelector({ value, onChange, language }) {
 
   return (
     <Autocomplete
-      value={value}
-      onChange={(_event, newValue) => {
-        // Si newValue est un objet, extraire la string
-        if (typeof newValue === 'string') {
-          onChange(newValue);
-        } else if (newValue && typeof newValue === 'object' && newValue.inputValue) {
-          onChange(newValue.inputValue);
-        } else if (typeof newValue === 'object' && newValue !== null) {
-          onChange(newValue.label || newValue.value || '');
-        } else {
-          onChange('');
-        }
-      }}
-      inputValue={inputValue}
-      onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
+      freeSolo
+      disableClearable
       options={verbes}
       loading={loading}
-      disablePortal
-      openOnFocus
+      inputValue={inputValue}
+      onInputChange={(_, value) => setInputValue(value)}
+      value={value || ''}
+      onChange={(_, v) => onChange(v)}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -60,6 +49,18 @@ function VerbSelector({ value, onChange, language }) {
           size="medium"
           InputProps={{
             ...params.InputProps,
+            style: {
+              background: 'rgba(30,40,70,0.18)',
+              color: '#f4f4ff',
+              border: '1.5px solid #18ff6d',
+              borderRadius: 10,
+              boxShadow: '0 0 8px #18ff6d44',
+              fontWeight: 600,
+              fontFamily: 'Orbitron, monospace',
+              fontSize: '1.06rem',
+              letterSpacing: '0.01em',
+              transition: 'all 0.18s',
+            },
             endAdornment: (
               <React.Fragment>
                 {loading ? <CircularProgress color="inherit" size={20} /> : null}
@@ -67,18 +68,40 @@ function VerbSelector({ value, onChange, language }) {
               </React.Fragment>
             ),
           }}
+          InputLabelProps={{ style: { color: '#caffee', fontWeight: 500, fontSize: '1.07rem'} }}
+          sx={{
+            '& .MuiOutlinedInput-notchedOutline': {
+              border: 'none',
+            },
+            '& input': {
+              color: '#fff',
+              fontWeight: 600,
+              fontFamily: 'Orbitron, monospace',
+              background: 'transparent',
+            },
+            '& .MuiInputBase-root': {
+              background: 'rgba(30,40,70,0.18)',
+              borderRadius: 10,
+              boxShadow: '0 0 8px #18ff6d22',
+            },
+            '& .MuiAutocomplete-endAdornment': {
+              color: '#18ff6d',
+            },
+            '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+              border: '2px solid #18ff6d',
+            },
+          }}
         />
       )}
       sx={{
         width: '100%',
         marginBottom: 2,
-        '& .MuiOutlinedInput-root': {
-          backgroundColor: '#ffffff'
-        }
+        background: 'transparent',
+        borderRadius: 10,
+        boxShadow: 'none',
       }}
     />
   );
 }
-
 
 export default VerbSelector;
